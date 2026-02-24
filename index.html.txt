@@ -1,0 +1,189 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>VASA Clubs — Distance Finder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Leaflet (CDN) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <style>
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    .wrap { display:flex; height:100vh; }
+    #map { flex: 1 1 auto; }
+    .panel {
+      width: 380px; max-width: 45vw; border-left: 1px solid #ddd;
+      padding: 12px; overflow:auto; background:#fff;
+    }
+    .title { font-weight: 700; font-size: 16px; margin-bottom: 6px; }
+    .sub { color:#555; font-size: 13px; margin-bottom: 10px; }
+    .controls { display:flex; gap:8px; align-items:center; margin: 8px 0 12px; }
+    input[type="number"] { width: 110px; padding:6px; }
+    button { padding: 7px 10px; cursor:pointer; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { text-align:left; padding: 6px; border-bottom: 1px solid #eee; font-size: 13px; }
+    tr:hover { background:#fafafa; }
+    .muted { color:#666; font-size: 12px; }
+    .pill { display:inline-block; padding:2px 8px; border:1px solid #ddd; border-radius: 999px; font-size:12px; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div id="map"></div>
+
+  <div class="panel">
+    <div class="title">Distance Finder</div>
+    <div class="sub">Click a club on the map to see distances to all other clubs.</div>
+
+    <div id="selected" class="muted">No club selected yet.</div>
+
+    <div class="controls">
+      <label class="muted" for="radius">Within (miles):</label>
+      <input id="radius" type="number" min="0" step="5" value="0" />
+      <button id="clearLines">Clear lines</button>
+    </div>
+
+    <div id="summary" class="muted"></div>
+
+    <table id="results" style="display:none;">
+      <thead>
+        <tr><th>Club</th><th>Distance</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // --- Utilities ---
+  function haversineMiles(lat1, lon1, lat2, lon2) {
+    const toRad = d => d * Math.PI / 180;
+    const R = 3958.7613; // Earth radius in miles
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+
+  // --- Map setup ---
+  const map = L.map('map').setView([39.5, -98.35], 4); // USA
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  const markers = [];
+  let clubs = [];
+  let selectedClub = null;
+
+  const lineLayer = L.layerGroup().addTo(map);
+
+  function clearLines() {
+    lineLayer.clearLayers();
+  }
+
+  function renderDistances() {
+    if (!selectedClub) return;
+
+    const radiusMiles = Number(document.getElementById('radius').value || 0);
+
+    const rows = clubs
+      .filter(c => c.id !== selectedClub.id)
+      .map(c => {
+        const d = haversineMiles(selectedClub.lat, selectedClub.lng, c.lat, c.lng);
+        return { club: c, miles: d };
+      })
+      .sort((a,b) => a.miles - b.miles)
+      .filter(x => radiusMiles <= 0 ? true : x.miles <= radiusMiles);
+
+    const tbody = document.querySelector('#results tbody');
+    tbody.innerHTML = "";
+
+    rows.forEach(({club, miles}) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <div style="font-weight:600;">${club.name}</div>
+          <div class="muted">${club.address || ""}</div>
+        </td>
+        <td><span class="pill">${miles.toFixed(1)} mi</span></td>
+      `;
+      tr.addEventListener('click', () => {
+        map.setView([club.lat, club.lng], 11);
+      });
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('results').style.display = "table";
+    document.getElementById('summary').innerHTML =
+      `Showing <b>${rows.length}</b> clubs ${radiusMiles > 0 ? `within <b>${radiusMiles}</b> miles` : "(all clubs)"} of <b>${selectedClub.name}</b>.`;
+  }
+
+  function drawLinesToNearest(limit = 0) {
+    clearLines();
+    if (!selectedClub) return;
+
+    const sorted = clubs
+      .filter(c => c.id !== selectedClub.id)
+      .map(c => ({
+        club: c,
+        miles: haversineMiles(selectedClub.lat, selectedClub.lng, c.lat, c.lng)
+      }))
+      .sort((a,b) => a.miles - b.miles);
+
+    const list = (limit > 0) ? sorted.slice(0, limit) : sorted;
+
+    list.forEach(({club}) => {
+      L.polyline([[selectedClub.lat, selectedClub.lng],[club.lat, club.lng]], {
+        weight: 2,
+        opacity: 0.6
+      }).addTo(lineLayer);
+    });
+  }
+
+  function onSelectClub(club) {
+    selectedClub = club;
+    document.getElementById('selected').innerHTML =
+      `<div><b>Selected:</b> ${club.name}</div><div class="muted">${club.address || ""}</div>`;
+    renderDistances();
+
+    // Optional: draw lines to nearest 10 clubs. Change/remove if you don’t want this.
+    drawLinesToNearest(10);
+  }
+
+  // --- Load club data ---
+  fetch('clubs.json')
+    .then(r => r.json())
+    .then(data => {
+      clubs = data;
+
+      const bounds = [];
+      clubs.forEach(club => {
+        const m = L.marker([club.lat, club.lng]).addTo(map);
+        m.bindPopup(`<b>${club.name}</b><br>${club.address || ""}<br><i>Click marker to calculate distances</i>`);
+        m.on('click', () => onSelectClub(club));
+        markers.push(m);
+        bounds.push([club.lat, club.lng]);
+      });
+
+      if (bounds.length) map.fitBounds(bounds, { padding: [30, 30] });
+    })
+    .catch(err => {
+      alert("Could not load clubs.json. Make sure it’s in the same folder as index.html and you’re running a local server.");
+      console.error(err);
+    });
+
+  // --- UI events ---
+  document.getElementById('radius').addEventListener('input', () => renderDistances());
+  document.getElementById('clearLines').addEventListener('click', () => clearLines());
+</script>
+</body>
+</html>

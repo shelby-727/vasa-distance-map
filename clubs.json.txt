@@ -1,0 +1,9 @@
+[
+  {
+    "id": "willow-creek",
+    "name": "Willow Creek",
+    "address": "123 Main St, City, ST",
+    "lat": 40.123,
+    "lng": -111.123
+  }
+]
