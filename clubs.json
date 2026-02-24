@@ -1,9 +1,492 @@
 [
   {
-    "id": "willow-creek",
-    "name": "Willow Creek",
-    "address": "123 Main St, City, ST",
-    "lat": 40.123,
-    "lng": -111.123
+    "id": "brickyard",
+    "name": "Brickyard",
+    "address": "1172 E Brickyard Rd, Salt Lake City, UT 84106",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "west-valley-3500-s",
+    "name": "West Valley 3500 S",
+    "address": "3491 W 3500 S, West Valley, UT 84119",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "magna-centennial",
+    "name": "Magna (Centennial)",
+    "address": "3420 S 5600 W, West Valley City, UT 84120",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "taylorsville",
+    "name": "Taylorsville",
+    "address": "5345 S 4015 W, Taylorsville, UT 84129",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "tooele",
+    "name": "Tooele",
+    "address": "250 N Main St, Tooele, UT 84074",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "spanish-fork",
+    "name": "Spanish Fork",
+    "address": "652 N 800 E, Spanish Fork, UT 84660",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "provo",
+    "name": "Provo",
+    "address": "460 N 900 E, Provo, UT 84606",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "university",
+    "name": "University",
+    "address": "1259 S 800 E, Orem, UT 84097",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "north-orem",
+    "name": "North Orem",
+    "address": "1585 N State St, Orem, UT 84057",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "american-fork",
+    "name": "American Fork",
+    "address": "648 E State Rd, American Fork, UT 84003",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "draper",
+    "name": "Draper",
+    "address": "12101 S State St, Draper, UT 84020",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "riverton",
+    "name": "Riverton",
+    "address": "1777 W 12600 S, Riverton, UT  84065",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "herriman",
+    "name": "Herriman",
+    "address": "13366 S Rosecrest Rd, Herriman, UT 84096",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "south-jordan",
+    "name": "South Jordan",
+    "address": "3709 W South Jordan Pkwy, South Jordan, UT 84095",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "west-jordan",
+    "name": "West Jordan",
+    "address": "7836 S Redwood Rd, West Jordan, UT 84088",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "murray-van-winkle",
+    "name": "Murray Van Winkle",
+    "address": "5518 S Van Winkle, Murray, UT 84117",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "sandy",
+    "name": "Sandy",
+    "address": "7990 S 1300 E, Sandy, UT 84094",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "lehi",
+    "name": "Lehi",
+    "address": "1640 E 3500 N, Lehi, UT 84043",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "saratoga-springs",
+    "name": "Saratoga Springs",
+    "address": "1320 S Redwood Rd, Saratoga Springs, UT 84045",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "cedar-city",
+    "name": "Cedar City",
+    "address": "1605 West Regency Rd, Cedar City, UT 84720",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "st-george",
+    "name": "St. George",
+    "address": "484 N Mall Dr, St. George, UT 84790",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "phoenix-northern-ave",
+    "name": "Phoenix  Northern Ave",
+    "address": "8021 N 35th Ave, Phoenix, AZ 85051",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "phoenix-east-thunderbird-32nd-2",
+    "name": "Phoenix East Thunderbird & 32nd (2)",
+    "address": "3131 E Thunderbird Rd, Phoenix, AZ 85032",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "phoenix-west-thunderbird-43rd",
+    "name": "Phoenix West Thunderbird & 43rd",
+    "address": "4255 W Thunderbird Rd, Phoenix, AZ 85053",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "tucson",
+    "name": "Tucson",
+    "address": "3920 E Grant Rd, Tucson, AZ, 85712",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "chandler",
+    "name": "Chandler",
+    "address": "1200 N Alma School Rd. Chandler, AZ 85224",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "ogden",
+    "name": "Ogden",
+    "address": "1150 Washington Blvd, Ogden, UT 84404",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "clinton",
+    "name": "Clinton",
+    "address": "2642 N 200 W, Clinton, UT 84015",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "layton",
+    "name": "Layton",
+    "address": "2076 N Main St, Layton, UT 84041",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "kaysville",
+    "name": "Kaysville",
+    "address": "170 W 200 N, Kaysville, UT 84037",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "bountiful",
+    "name": "Bountiful",
+    "address": "250 W 1500 S, Bountiful, UT, 84010",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "indy-thompson-1",
+    "name": "Indy Thompson (1)",
+    "address": "5325 Thompson Rd, Indianapolis, IN 46237",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "lafayette",
+    "name": "Lafayette",
+    "address": "3825 South St, Lafayette, IN 47905",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "indy-eagle-creek-2",
+    "name": "Indy Eagle Creek (2)",
+    "address": "6965 W 38th St, Indianapolis, IN 46254",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "indy-castleton",
+    "name": "Indy Castleton",
+    "address": "8315 Center Run Dr, Indianapolis, IN 46250",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "wheaton",
+    "name": "Wheaton",
+    "address": "501 South County Farm Rd, Wheaton, IL 60187",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "northbrook",
+    "name": "Northbrook",
+    "address": "4125 E Dundee Road, Northbrook, IL 60062",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "crystal-lake",
+    "name": "Crystal Lake",
+    "address": "6120 Northwest Highway, Crystal Lake, IL 60014",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "villa-park",
+    "name": "Villa Park",
+    "address": "300 W North Ave, Villa Park, IL 60181",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "new-berlin",
+    "name": "New Berlin",
+    "address": "13995 W National Ave, New Berlin, WI 53151",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "racine",
+    "name": "Racine",
+    "address": "5201 Washington Ave, Suite 4, Racine, WI 53406",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "rockford",
+    "name": "Rockford",
+    "address": "2601 N Mulford RD, Unit A, Rockford, IL, 61114",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "joliet",
+    "name": "Joliet",
+    "address": "1590 N Larkin Ave, Joliet, IL 60435",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "glendale-heights",
+    "name": "Glendale Heights",
+    "address": "125 Army Trail Rd, Glendale Heights, IL 60139",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "oswego",
+    "name": "Oswego",
+    "address": "3010 Route 34, Oswego, IL 60543",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "matteson",
+    "name": "Matteson",
+    "address": "4011 Lincoln Highway, Matteson, IL 60443",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "greeley",
+    "name": "Greeley",
+    "address": "2325 23rd Ave, Greeley, CO 80634",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "thornton",
+    "name": "Thornton",
+    "address": "1420 E 104th Ave, Thornton, CO 80233",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "westminster-church-1",
+    "name": "Westminster Church (1)",
+    "address": "8543 Church Ranch Blvd, Westminster, CO 80021",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "westminster-federal-2",
+    "name": "Westminster Federal (2)",
+    "address": "7353 Federal Blvd, Westminster, CO 80030",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "westminster-zuni-3",
+    "name": "Westminster Zuni (3)",
+    "address": "12900 Zuni St, Westminster, CO 80234",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "longmont",
+    "name": "Longmont",
+    "address": "630 Pace Street, Longmont, CO, 80504",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "lafayette-baseline",
+    "name": "Lafayette-Baseline",
+    "address": "480 US Highway 287, Lafayette, CO, 80025",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "littleton",
+    "name": "Littleton",
+    "address": "8055 West Bowles Ave, #2R, Littleton, CO 80123",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "aurora-quincy-a1",
+    "name": "Aurora\u00a0Quincy (A1)",
+    "address": "16921 E Quincy Ave, Aurora, CO 80015",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "aurora-colfax-a2",
+    "name": "Aurora Colfax (A2)",
+    "address": "15200 E Colfax Ave, Aurora, CO 80011",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "aurora-havana",
+    "name": "Aurora Havana",
+    "address": "1200 South Ironton Street, Aurora, CO 80012",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "denver-jewell-djs",
+    "name": "Denver Jewell (DJS)",
+    "address": "1955 S Sheridan Blvd, Denver, CO 80227",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "cos1-cheyenne",
+    "name": "COS1 Cheyenne",
+    "address": "455 E Cheyenne Mountain Blvd, Colorado Springs 80906",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "cos2-nevada-ave",
+    "name": "COS2 Nevada Ave",
+    "address": "3020 N Nevada Ave, Colorado Springs, CO 80907",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "cos3-north-powers",
+    "name": "COS3 North Powers",
+    "address": "5885 Palmer Park Blvd, Colorado Springs, CO 80915",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "cos4-union",
+    "name": "COS4 Union",
+    "address": "7655 North Union Blvd, Colorado Springs, CO 80920",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "centennial-willow-creek",
+    "name": "Centennial Willow Creek",
+    "address": "8200 S Quebec St, Centennial, CO 80112",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "smoky-hill-centennial",
+    "name": "Smoky Hill Centennial",
+    "address": "20153 E Smoky Hill Rd, Centennial, CO 80015",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "tulsa",
+    "name": "Tulsa",
+    "address": "7990 E 51st Street, Tulsa, OK 74145",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "okc-penn",
+    "name": "OKC Penn",
+    "address": "2500 N Pennsylvania Ave, Oklahoma City, OK 73107",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "okc-western",
+    "name": "OKC Western",
+    "address": "4106 S Western Ave, Oklahoma City, OK 73109",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "omaha",
+    "name": "Omaha",
+    "address": "14445 W Center Rd, Omaha, NE 68144",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "lincoln",
+    "name": "Lincoln",
+    "address": "4615 Vine Street, Lincoln, NE 68503",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": "bellevue",
+    "name": "Bellevue",
+    "address": "909 Fort Crook Road, Bellevue, NE, 68005",
+    "lat": null,
+    "lng": null
   }
 ]
