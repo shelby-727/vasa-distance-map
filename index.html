@@ -7,7 +7,7 @@
 
   <!-- Leaflet (CDN) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZQ1vV6xM5xZ0XH0=" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
@@ -16,19 +16,32 @@
     .wrap { display:flex; height:100vh; }
     #map { flex: 1 1 auto; }
     .panel {
-      width: 380px; max-width: 45vw; border-left: 1px solid #ddd;
+      width: 420px; max-width: 45vw; border-left: 1px solid #ddd;
       padding: 12px; overflow:auto; background:#fff;
     }
-    .title { font-weight: 700; font-size: 16px; margin-bottom: 6px; }
+    .title { font-weight: 800; font-size: 16px; margin-bottom: 6px; }
     .sub { color:#555; font-size: 13px; margin-bottom: 10px; }
-    .controls { display:flex; gap:8px; align-items:center; margin: 8px 0 12px; }
-    input[type="number"] { width: 110px; padding:6px; }
+    .controls { display:flex; gap:8px; align-items:center; margin: 8px 0 12px; flex-wrap: wrap; }
+    input[type="number"] { width: 130px; padding:6px; }
     button { padding: 7px 10px; cursor:pointer; }
     table { width:100%; border-collapse: collapse; }
-    th, td { text-align:left; padding: 6px; border-bottom: 1px solid #eee; font-size: 13px; }
+    th, td { text-align:left; padding: 6px; border-bottom: 1px solid #eee; font-size: 13px; vertical-align: top; }
     tr:hover { background:#fafafa; }
     .muted { color:#666; font-size: 12px; }
     .pill { display:inline-block; padding:2px 8px; border:1px solid #ddd; border-radius: 999px; font-size:12px; }
+    .kv { margin-top: 10px; }
+    .kv .row { display:flex; gap:10px; padding: 4px 0; border-bottom: 1px dashed #eee; }
+    .kv .k { width: 140px; font-weight: 700; font-size: 12px; color:#333; }
+    .kv .v { flex: 1; font-size: 12px; color:#333; }
+    .label-tooltip {
+      background: rgba(255,255,255,0.92);
+      border: 1px solid #ddd;
+      color: #111;
+      border-radius: 6px;
+      padding: 2px 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
@@ -37,7 +50,7 @@
 
   <div class="panel">
     <div class="title">Distance Finder</div>
-    <div class="sub">Click a club on the map to see distances to all other clubs.</div>
+    <div class="sub">Click a club to see details + distances to all other clubs.</div>
 
     <div id="selected" class="muted">No club selected yet.</div>
 
@@ -45,9 +58,14 @@
       <label class="muted" for="radius">Within (miles):</label>
       <input id="radius" type="number" min="0" step="5" value="0" />
       <button id="clearLines">Clear lines</button>
+      <button id="toggleLabels">Show labels</button>
     </div>
 
     <div id="summary" class="muted"></div>
+
+    <div id="clubDetails" style="display:none;"></div>
+
+    <hr style="border:none;border-top:1px solid #eee;margin:12px 0;">
 
     <table id="results" style="display:none;">
       <thead>
@@ -62,7 +80,7 @@
   // --- Utilities ---
   function haversineMiles(lat1, lon1, lat2, lon2) {
     const toRad = d => d * Math.PI / 180;
-    const R = 3958.7613; // Earth radius in miles
+    const R = 3958.7613; // miles
     const dLat = toRad(lat2 - lat1);
     const dLon = toRad(lon2 - lon1);
     const a =
@@ -73,8 +91,24 @@
     return R * c;
   }
 
+  function esc(s) {
+    return String(s ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function renderKeyValue(club) {
+    // Show "everything from the Excel" except null/empty and lat/lng duplicates.
+    const skip = new Set(["lat","lng","id"]);
+    const rows = Object.keys(club)
+      .filter(k => !skip.has(k) && club[k] !== null && club[k] !== "" && club[k] !== undefined)
+      .sort((a,b) => a.localeCompare(b))
+      .map(k => `<div class="row"><div class="k">${esc(k)}</div><div class="v">${esc(club[k])}</div></div>`)
+      .join("");
+
+    return `<div class="kv">${rows}</div>`;
+  }
+
   // --- Map setup ---
-  const map = L.map('map').setView([39.5, -98.35], 4); // USA
+  const map = L.map('map').setView([39.5, -98.35], 4);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
     attribution: '&copy; OpenStreetMap contributors'
@@ -86,9 +120,7 @@
 
   const lineLayer = L.layerGroup().addTo(map);
 
-  function clearLines() {
-    lineLayer.clearLayers();
-  }
+  function clearLines() { lineLayer.clearLayers(); }
 
   function renderDistances() {
     if (!selectedClub) return;
@@ -111,79 +143,119 @@
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>
-          <div style="font-weight:600;">${club.name}</div>
-          <div class="muted">${club.address || ""}</div>
+          <div style="font-weight:700;">${esc(club.name)}</div>
+          <div class="muted">${esc(club.address || "")}</div>
         </td>
         <td><span class="pill">${miles.toFixed(1)} mi</span></td>
       `;
-      tr.addEventListener('click', () => {
-        map.setView([club.lat, club.lng], 11);
-      });
+      tr.addEventListener('click', () => map.setView([club.lat, club.lng], 12));
       tbody.appendChild(tr);
     });
 
     document.getElementById('results').style.display = "table";
     document.getElementById('summary').innerHTML =
-      `Showing <b>${rows.length}</b> clubs ${radiusMiles > 0 ? `within <b>${radiusMiles}</b> miles` : "(all clubs)"} of <b>${selectedClub.name}</b>.`;
+      `Showing <b>${rows.length}</b> clubs ${radiusMiles > 0 ? `within <b>${radiusMiles}</b> miles` : "(all clubs)"} of <b>${esc(selectedClub.name)}</b>.`;
   }
 
-  function drawLinesToNearest(limit = 0) {
+  function drawLinesToNearest(limit = 10) {
     clearLines();
     if (!selectedClub) return;
 
     const sorted = clubs
       .filter(c => c.id !== selectedClub.id)
-      .map(c => ({
-        club: c,
-        miles: haversineMiles(selectedClub.lat, selectedClub.lng, c.lat, c.lng)
-      }))
-      .sort((a,b) => a.miles - b.miles);
+      .map(c => ({ club: c, miles: haversineMiles(selectedClub.lat, selectedClub.lng, c.lat, c.lng) }))
+      .sort((a,b) => a.miles - b.miles)
+      .slice(0, limit);
 
-    const list = (limit > 0) ? sorted.slice(0, limit) : sorted;
-
-    list.forEach(({club}) => {
-      L.polyline([[selectedClub.lat, selectedClub.lng],[club.lat, club.lng]], {
-        weight: 2,
-        opacity: 0.6
-      }).addTo(lineLayer);
+    sorted.forEach(({club}) => {
+      L.polyline([[selectedClub.lat, selectedClub.lng],[club.lat, club.lng]], { weight: 2, opacity: 0.6 }).addTo(lineLayer);
     });
+  }
+
+  function showClubDetails(club) {
+    const el = document.getElementById('clubDetails');
+    el.style.display = "block";
+    el.innerHTML = `
+      <div style="font-weight:800; font-size:14px; margin-top: 8px;">${esc(club.name)}</div>
+      <div class="muted">${esc(club.address || "")}</div>
+      ${renderKeyValue(club)}
+    `;
   }
 
   function onSelectClub(club) {
     selectedClub = club;
     document.getElementById('selected').innerHTML =
-      `<div><b>Selected:</b> ${club.name}</div><div class="muted">${club.address || ""}</div>`;
+      `<div><b>Selected:</b> ${esc(club.name)}</div><div class="muted">${esc(club.address || "")}</div>`;
+    showClubDetails(club);
     renderDistances();
-
-    // Optional: draw lines to nearest 10 clubs. Change/remove if you don’t want this.
     drawLinesToNearest(10);
+  }
+
+  // --- Zoom labels ---
+  let labelsEnabled = true;
+  const labelZoomThreshold = 12;
+
+  function updateLabels() {
+    const z = map.getZoom();
+    markers.forEach(({marker, club}) => {
+      if (!labelsEnabled) {
+        marker.unbindTooltip();
+        return;
+      }
+      if (z >= labelZoomThreshold) {
+        if (!marker.getTooltip()) {
+          marker.bindTooltip(esc(club.name), {
+            permanent: true,
+            direction: "top",
+            offset: [0, -10],
+            className: "label-tooltip"
+          });
+        }
+      } else {
+        marker.unbindTooltip();
+      }
+    });
   }
 
   // --- Load club data ---
   fetch('clubs.json')
-    .then(r => r.json())
+    .then(r => {
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r.json();
+    })
     .then(data => {
-      clubs = data;
-
+      clubs = data.filter(c => typeof c.lat === "number" && typeof c.lng === "number");
       const bounds = [];
+
       clubs.forEach(club => {
-        const m = L.marker([club.lat, club.lng]).addTo(map);
-        m.bindPopup(`<b>${club.name}</b><br>${club.address || ""}<br><i>Click marker to calculate distances</i>`);
-        m.on('click', () => onSelectClub(club));
-        markers.push(m);
+        const marker = L.marker([club.lat, club.lng]).addTo(map);
+
+        // Compact popup, full details in the right panel
+        marker.bindPopup(`<b>${esc(club.name)}</b><br>${esc(club.address || "")}<br><span class="muted">Click to calculate distances</span>`);
+
+        marker.on('click', () => onSelectClub(club));
+        markers.push({marker, club});
         bounds.push([club.lat, club.lng]);
       });
 
       if (bounds.length) map.fitBounds(bounds, { padding: [30, 30] });
+      updateLabels();
     })
     .catch(err => {
-      alert("Could not load clubs.json. Make sure it’s in the same folder as index.html and you’re running a local server.");
+      alert("Could not load clubs.json. Make sure it's in the same folder as index.html.");
       console.error(err);
     });
 
   // --- UI events ---
-  document.getElementById('radius').addEventListener('input', () => renderDistances());
-  document.getElementById('clearLines').addEventListener('click', () => clearLines());
+  document.getElementById('radius').addEventListener('input', renderDistances);
+  document.getElementById('clearLines').addEventListener('click', clearLines);
+  document.getElementById('toggleLabels').addEventListener('click', () => {
+    labelsEnabled = !labelsEnabled;
+    document.getElementById('toggleLabels').textContent = labelsEnabled ? "Hide labels" : "Show labels";
+    updateLabels();
+  });
+
+  map.on('zoomend', updateLabels);
 </script>
 </body>
 </html>
